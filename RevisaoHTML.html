@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quiz HTML Interativo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+  background-position: center;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #111827, #1f2937);
+      color: #f9fafb;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+ h1{
+  font-size: 18px;
+ }
+ h3{
+  font-size: 12px;
+ }
+    h1, h3 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    img.banner {
+      width: 100px;
+      margin-bottom: 10px;
+    }
+
+    .container {
+      background: #1e293b;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 400px;
+      overflow: hidden;
+    }
+
+    .chat {
+      height: 300px;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .message {
+      margin-bottom: 15px;
+      display: flex;
+    }
+
+    .message.bot {
+      justify-content: flex-start;
+    }
+
+    .message.user {
+      justify-content: flex-end;
+    }
+
+    .bubble {
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 20px;
+      line-height: 1.5;
+    }
+
+    .bot .bubble {
+      background: #334155;
+      color: #f9fafb;
+      border-bottom-left-radius: 0;
+    }
+
+    .user .bubble {
+      background: #6366f1;
+      color: white;
+      border-bottom-right-radius: 0;
+    }
+
+    .input-area {
+      padding: 16px;
+      background: #0f172a;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .input-area input {
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 24px;
+      border: none;
+      outline: none;
+      background: #1e293b;
+      color: #f1f5f9;
+    }
+
+    .input-area button {
+      padding: 12px;
+      border: none;
+      border-radius: 24px;
+      background: #6366f1;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .input-area button:hover {
+      background: #4f46e5;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    img.feedback {
+      width: 70px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Quiz HTML</h1>
+  <h3>Desenvolvido especialmente para o 2ºINFO/2025</h3>
+  <div class="container">
+    
+    <div class="chat" id="chat"></div>
+    <div class="input-area" id="inputArea"></div>
+  </div>
+
+  <script>
+    const questions = [
+      { question: "O que significa HTML?", correct: "Linguagem de Marcação de Hipertexto", options: [ "Linguagem de Programação", "Linguagem de Estilo","Linguagem de Marcação de Hipertexto", "Linguagem de Script"] },
+      { question: "Qual tag usamos para criar um parágrafo?", correct: "<p>", options: ["<p>", "<h1>", "<div>", "<br>"] },
+      { question: "Qual tag representa um título de nível 1?", correct: "<h1>", options: [ "<title>","<h1>", "<header>", "<head>"] },
+      { question: "Para criar um link, usamos a tag:", correct: "<a>", options: ["<link>","<a>",  "<href>", "<ul>"] },
+      { question: "A tag <img> serve para:", correct: "Inserir uma imagem", options: ["Inserir uma imagem", "Inserir um link", "Inserir uma tabela", "Inserir um botão"] },
+      { question: "Qual extensão de arquivo é usada em arquivos HTML?", correct: ".html", options: [".ht", ".html", ".css", ".js" ] },
+      { question: "Qual software é um editor de código muito usado para HTML?", correct: "Visual Studio Code", options: [ "Paint", "Visual Studio Code","Word", "Excel"] },
+      { question: "Onde se escreve o conteúdo visível da página?", correct: "<body>", options: ["<body>", "<head>", "<meta>", "<html>"] },
+      { question: "A tag <title> aparece em qual lugar?", correct: "Na aba do navegador", options: ["Na aba do navegador", "No rodapé da página", "No corpo da página", "No menu"] },
+      { question: "Qual tag usamos para criar uma lista ordenada?", correct: "<ol>", options: ["<ol>", "<ul>", "<li>", "<dl>"] },
+      { question: "Qual tag usamos para criar uma lista não ordenada?", correct: "<ul>", options: ["<ul>", "<ol>", "<li>", "<dl>"] },
+      { question: "Qual elemento usamos para destacar um trecho com ênfase?", correct: "<em>", options: ["<em>", "<strong>", "<mark>", "<span>"] },
+      { question: "Para abrir um link em nova aba usamos:", correct: 'target=\"_blank\"', options: ["target=\"_blank\"", "href=\"new\"", "rel=\"external\"", "tab=\"new\""] },
+      { question: "Como referenciar uma imagem local em HTML?", correct: 'src=\"caminho/arquivo.jpg\"', options: [ "link=\"imagem\"", "href=\"img\"", "img=\"src\"","src=\"caminho/arquivo.jpg\""] },
+      { question: "Onde colocamos as meta tags?", correct: "No <head>", options: ["No <head>", "No <body>", "No <footer>", "No <main>"] },
+      { question: "Qual estrutura usamos para separar o conteúdo em seções principais?", correct: "<section>", options: ["<section>", "<div>", "<span>", "<footer>"] },
+      { question: "Para comentar no HTML, usamos:", correct: "<!-- comentário -->", options: ["<!-- comentário -->", "// comentário", "# comentário", "/* comentário */"] },
+      { question: "O que significa a sigla URL?", correct: "Uniform Resource Locator", options: ["Uniform Resource Locator", "Universal Reference Link", "Unique Reference Locator", "Ultimate Resource Locator"] },
+      { question: "Para aplicar estilo usamos:", correct: "CSS", options: [ "PHP","CSS", "JavaScript", "HTML"] },
+      { question: "Como organizamos um projeto web no VS Code?", correct: "Pastas separadas por tipo de arquivo", options: ["Pastas separadas por tipo de arquivo", "Todos os arquivos na raiz", "Uma pasta única para tudo", "Separação não importa"] },
+      { question: "Tag para negrito sem ênfase semântica:", correct: "<b>", options: ["<b>", "<strong>", "<em>", "<i>"] },
+      { question: "Tag para itálico sem ênfase semântica:", correct: "<i>", options: ["<em>","<i>",  "<b>", "<u>"] },
+      { question: "Como incluímos comentários em HTML?", correct: "<!-- Comentário -->", options: ["<!-- Comentário -->", "// Comentário", "# Comentário", "** Comentário **"] },
+      { question: "Para agrupar elementos genéricos usamos:", correct: "<div>", options: ["<span>", "<group>","<div>",  "<section>"] },
+      { question: "Tag para inserir uma linha horizontal:", correct: "<hr>", options: ["<hr>", "<br>", "<line>", "<horizontal>"] },
+      { question: "Qual é a primeira linha obrigatória em um arquivo HTML5?", correct: "<!DOCTYPE html>", options: ["<!DOCTYPE html>", "<html>", "<head>", "<meta>"] },
+      { question: "Como definimos o idioma da página HTML?", correct: "<html lang=\"pt-BR\">", options: ["<html lang=\"pt-BR\">", "<meta lang=\"pt\">", "<head lang=\"pt\">", "<body lang=\"pt\">"] },
+      { question: "Tag usada para rodapés:", correct: "<footer>", options: [ "<bottom>", "<rodape>", "<end>","<footer>"] },
+      { question: "Tag usada para menus de navegação:", correct: "<nav>", options: ["<nav>", "<menu>", "<list>", "<sidebar>"] },
+      { question: "HTML é uma linguagem:", correct: "De marcação", options: [ "De programação", "De marcação","De banco de dados", "De estilo"] }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let userName = "";
+
+    const chat = document.getElementById("chat");
+    const inputArea = document.getElementById("inputArea");
+
+    function addMessage(text, sender = "bot") {
+      const messageElem = document.createElement("div");
+      messageElem.classList.add("message", sender);
+      const bubble = document.createElement("div");
+      bubble.classList.add("bubble");
+      bubble.textContent = text;
+      messageElem.appendChild(bubble);
+      chat.appendChild(messageElem);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function addImage(src) {
+      const img = document.createElement("img");
+      img.src = src;
+      img.classList.add("feedback");
+      chat.appendChild(img);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function clearInputArea() {
+      inputArea.innerHTML = "";
+    }
+
+    function askUserName() {
+      addMessage("Oiê galerinha, vamos revisar HTML? 🧠");
+      addMessage("Digite seu nome...");
+      clearInputArea();
+
+      const inputGroup = document.createElement("div");
+      inputGroup.style.display = "flex";
+      inputGroup.style.gap = "10px";
+
+      const nameInput = document.createElement("input");
+      nameInput.type = "text";
+      nameInput.placeholder = "Digite seu nome...";
+
+      const submitBtn = document.createElement("button");
+      submitBtn.textContent = "Enviar";
+
+      function submitName() {
+        if (nameInput.value.trim()) {
+          userName = nameInput.value.trim();
+          addMessage(userName, "user");
+          clearInputArea();
+          setTimeout(() => {
+            addMessage(`Vamos começar, ${userName}!`);
+            setTimeout(showQuestion, 1000);
+          }, 500);
+        }
+      }
+
+      submitBtn.addEventListener("click", submitName);
+      nameInput.addEventListener("keydown", e => {
+        if (e.key === "Enter") submitName();
+      });
+
+      inputGroup.appendChild(nameInput);
+      inputGroup.appendChild(submitBtn);
+      inputArea.appendChild(inputGroup);
+    }
+
+    function showQuestion() {
+      if (currentQuestion < questions.length) {
+        const q = questions[currentQuestion];
+        addMessage(`${currentQuestion + 1}. ${q.question}`);
+        clearInputArea();
+
+        const optionsDiv = document.createElement("div");
+        optionsDiv.classList.add("options");
+
+        q.options.forEach(option => {
+          const btn = document.createElement("button");
+          btn.textContent = option;
+          btn.addEventListener("click", () => {
+            addMessage(option, "user");
+            processAnswer(option);
+          });
+          optionsDiv.appendChild(btn);
+        });
+
+        inputArea.appendChild(optionsDiv);
+      } else {
+        showFinalScore();
+      }
+    }
+
+    function processAnswer(selected) {
+      const correct = questions[currentQuestion].correct;
+      if (selected === correct) {
+        score++;
+        addMessage("✅ Correto!");
+        addImage("./img/donaBaratinhaFeliz.png");
+      } else {
+        addMessage(`❌ Incorreto! A resposta certa é: ${correct}`);
+        addImage("./img/donaBaratinhaTriste.png");
+      }
+      currentQuestion++;
+      setTimeout(showQuestion, 1500);
+    }
+
+    function showFinalScore() {
+      clearInputArea();
+      const percentage = ((score / questions.length) * 100).toFixed(1);
+      addMessage(`🎉 Fim do quiz, ${userName}!`);
+      addMessage(`Você acertou ${score} de ${questions.length} perguntas. Aproveitamento: ${percentage}%`);
+
+      const restartBtn = document.createElement("button");
+      restartBtn.textContent = "Jogar novamente";
+      restartBtn.addEventListener("click", restartGame);
+      inputArea.appendChild(restartBtn);
+    }
+
+    function restartGame() {
+      currentQuestion = 0;
+      score = 0;
+      chat.innerHTML = "";
+      askUserName();
+    }
+
+    askUserName();
+  </script>
+</body>
+</html>
